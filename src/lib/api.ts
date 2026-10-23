@@ -1,3 +1,5 @@
+import { PREVIEW, PREVIEW_MESSAGE } from "./preview";
+
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -9,6 +11,8 @@ export class ApiError extends Error {
 
 /** JSON fetch wrapper. Throws ApiError with a user-readable message on failure. */
 export async function api<T = unknown>(path: string, opts: { method?: string; body?: unknown; signal?: AbortSignal } = {}): Promise<T> {
+  // The preview build has no server: fail fast instead of hitting whatever hosts the page.
+  if (PREVIEW) throw new ApiError(0, PREVIEW_MESSAGE);
   let res: Response;
   try {
     res = await fetch(path, {

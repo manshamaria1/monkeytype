@@ -4,6 +4,7 @@ import { api } from "../lib/api";
 import { clearLocalHistory, getLocalHistory } from "../lib/localHistory";
 import { DURATION_SHORTCUTS, NAV_SHORTCUTS } from "../lib/shortcuts";
 import { useAuth } from "../state/auth";
+import { PREVIEW } from "../lib/preview";
 import { useConfig } from "../state/config";
 import { useToast } from "../state/toast";
 import { useUi } from "../state/ui";
@@ -113,7 +114,7 @@ export default function Layout() {
           )}
         </nav>
       </header>
-      {import.meta.env.VITE_PREVIEW === "1" ? (
+      {PREVIEW ? (
         <div className="banner">
           Preview without a server: typing tests, settings, themes and practice work, and results stay in this browser. Accounts, leaderboards and
           multiplayer need the full app running on a server.

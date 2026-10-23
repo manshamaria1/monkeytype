@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import PreviewOnly from "../components/PreviewOnly";
+import { PREVIEW } from "../lib/preview";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { AVATARS, avatarEmoji } from "../../shared/avatars";
 import { getLanguage } from "../../shared/languages";
@@ -95,7 +97,7 @@ function ProfileView({ p }: { p: PublicProfile }) {
   );
 }
 
-export function PublicProfilePage() {
+function PublicProfilePageInner() {
   const { username } = useParams();
   const [p, setP] = useState<PublicProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -145,7 +147,7 @@ interface MatchRow {
   players: number;
 }
 
-export default function ProfilePage() {
+function ProfilePageInner() {
   const { user, loading, logout, refresh } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
@@ -427,4 +429,14 @@ function AccountSecurity() {
       </div>
     </>
   );
+}
+
+export default function ProfilePage() {
+  if (PREVIEW) return <PreviewOnly feature="Profile" />;
+  return <ProfilePageInner />;
+}
+
+export function PublicProfilePage() {
+  if (PREVIEW) return <PreviewOnly feature="Profile" />;
+  return <PublicProfilePageInner />;
 }

@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import PreviewOnly from "../components/PreviewOnly";
+import { PREVIEW } from "../lib/preview";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { DEFAULT_RULES, type TypingEvent } from "../../shared/engine";
 import { getLanguage, LANGUAGES } from "../../shared/languages";
@@ -12,7 +14,7 @@ import { TypingSession } from "../typing/session";
 import { useRoom, type RoomPlayer, type RoomState } from "../typing/useRoom";
 import { useKeySounds, useSessionActivity, useSessionClock } from "../typing/useTypingTest";
 
-export default function MultiplayerPage() {
+function MultiplayerPageInner() {
   const { code: urlCode } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -342,4 +344,9 @@ function HostSettings({ room, mp }: { room: RoomState; mp: Mp }) {
       </label>
     </div>
   );
+}
+
+export default function MultiplayerPage() {
+  if (PREVIEW) return <PreviewOnly feature="Multiplayer" />;
+  return <MultiplayerPageInner />;
 }

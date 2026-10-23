@@ -1,4 +1,6 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import PreviewOnly from "../components/PreviewOnly";
+import { PREVIEW } from "../lib/preview";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../lib/api";
 import { useAuth, type User } from "../state/auth";
@@ -32,7 +34,7 @@ function useSubmit() {
   return { busy, error, run };
 }
 
-export function LoginPage() {
+function LoginPageInner() {
   const { setUser, user } = useAuth();
   const navigate = useNavigate();
   const [login, setLogin] = useState("");
@@ -76,7 +78,7 @@ export function LoginPage() {
   );
 }
 
-export function RegisterPage() {
+function RegisterPageInner() {
   const { setUser } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -134,7 +136,7 @@ export function RegisterPage() {
   );
 }
 
-export function ForgotPage() {
+function ForgotPageInner() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState<string | null>(null);
   const { busy, error, run } = useSubmit();
@@ -174,7 +176,7 @@ export function ForgotPage() {
   );
 }
 
-export function ResetPage() {
+function ResetPageInner() {
   const [params] = useSearchParams();
   const token = params.get("token") ?? "";
   const toast = useToast();
@@ -215,7 +217,7 @@ export function ResetPage() {
   );
 }
 
-export function VerifyPage() {
+function VerifyPageInner() {
   const [params] = useSearchParams();
   const { refresh } = useAuth();
   const [state, setState] = useState<"working" | "ok" | string>("working");
@@ -240,4 +242,29 @@ export function VerifyPage() {
       {state !== "working" && state !== "ok" && <p className="form-error">{state}</p>}
     </AuthCard>
   );
+}
+
+export function LoginPage() {
+  if (PREVIEW) return <PreviewOnly feature="Accounts" />;
+  return <LoginPageInner />;
+}
+
+export function RegisterPage() {
+  if (PREVIEW) return <PreviewOnly feature="Accounts" />;
+  return <RegisterPageInner />;
+}
+
+export function ForgotPage() {
+  if (PREVIEW) return <PreviewOnly feature="Accounts" />;
+  return <ForgotPageInner />;
+}
+
+export function ResetPage() {
+  if (PREVIEW) return <PreviewOnly feature="Accounts" />;
+  return <ResetPageInner />;
+}
+
+export function VerifyPage() {
+  if (PREVIEW) return <PreviewOnly feature="Accounts" />;
+  return <VerifyPageInner />;
 }

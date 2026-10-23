@@ -6,6 +6,7 @@ import { ConfigProvider } from "./state/config";
 import { ToastProvider } from "./state/toast";
 import { UiProvider } from "./state/ui";
 import TestPage from "./pages/TestPage";
+import { PREVIEW } from "./lib/preview";
 
 // The typing test loads first; other pages are split into separate chunks.
 const LeaderboardPage = lazy(() => import("./pages/LeaderboardPage"));
@@ -40,8 +41,7 @@ function NotFound() {
   );
 }
 
-/** Preview build: runs without a server, inside a frame whose URL it cannot control. */
-export const PREVIEW = import.meta.env.VITE_PREVIEW === "1";
+// The preview build runs inside a frame whose URL it cannot control, so routes live in memory.
 const Router = PREVIEW ? MemoryRouter : BrowserRouter;
 
 export default function App() {

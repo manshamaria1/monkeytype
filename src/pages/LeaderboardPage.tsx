@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import PreviewOnly from "../components/PreviewOnly";
+import { PREVIEW } from "../lib/preview";
 import { Link, useSearchParams } from "react-router-dom";
 import { avatarEmoji } from "../../shared/avatars";
 import { LANGUAGES } from "../../shared/languages";
@@ -23,7 +25,7 @@ interface Entry {
 
 const PERIOD_LABEL: Record<string, string> = { daily: "today", weekly: "this week", monthly: "this month", alltime: "all-time" };
 
-export default function LeaderboardPage() {
+function LeaderboardPageInner() {
   const { user } = useAuth();
   const [params, setParams] = useSearchParams();
   const period = params.get("period") ?? "alltime";
@@ -249,4 +251,9 @@ export default function LeaderboardPage() {
       </details>
     </div>
   );
+}
+
+export default function LeaderboardPage() {
+  if (PREVIEW) return <PreviewOnly feature="Leaderboard" />;
+  return <LeaderboardPageInner />;
 }
