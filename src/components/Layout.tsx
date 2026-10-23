@@ -113,7 +113,14 @@ export default function Layout() {
           )}
         </nav>
       </header>
-      {offline && <div className="banner banner-error">Can't reach the server. Typing tests still work; results are kept on this device.</div>}
+      {import.meta.env.VITE_PREVIEW === "1" ? (
+        <div className="banner">
+          Preview without a server: typing tests, settings, themes and practice work, and results stay in this browser. Accounts, leaderboards and
+          multiplayer need the full app running on a server.
+        </div>
+      ) : (
+        offline && <div className="banner banner-error">Can't reach the server. Typing tests still work; results are kept on this device.</div>
+      )}
       <ImportBanner />
       <VerifyBanner />
       <main id="main" className="main">

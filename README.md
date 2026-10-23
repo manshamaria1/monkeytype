@@ -47,6 +47,7 @@ Without `SMTP_URL`, verification and password-reset emails are **printed to the 
 | --- | --- |
 | `npm run dev` | API (tsx watch) + Vite dev server with proxy for `/api` and `/ws` |
 | `npm run build` | Typecheck, build the client to `dist/client`, bundle the server to `dist/server` |
+| `npm run build:preview` | Build `dist/monkeytype-preview.html`: one self-contained page (no server) with the typing test, settings and practice, for quick demos |
 | `npm start` | Run the production build (serves API, WebSockets and the client on one port) |
 | `npm run migrate` / `npm run migrate:prod` | Apply database migrations (source / built) |
 | `npm test` | Unit + integration tests (needs `TEST_DATABASE_URL`; that database is **wiped**) |

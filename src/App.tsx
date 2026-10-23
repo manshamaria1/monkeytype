@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Link, MemoryRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import { AuthProvider } from "./state/auth";
 import { ConfigProvider } from "./state/config";
@@ -40,9 +40,13 @@ function NotFound() {
   );
 }
 
+/** Preview build: runs without a server, inside a frame whose URL it cannot control. */
+export const PREVIEW = import.meta.env.VITE_PREVIEW === "1";
+const Router = PREVIEW ? MemoryRouter : BrowserRouter;
+
 export default function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <ToastProvider>
         <AuthProvider>
           <ConfigProvider>
@@ -77,6 +81,6 @@ export default function App() {
           </ConfigProvider>
         </AuthProvider>
       </ToastProvider>
-    </BrowserRouter>
+    </Router>
   );
 }

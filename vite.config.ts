@@ -1,9 +1,20 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-export default defineConfig({
+// `vite build --mode preview` makes a single self-contained page (no server) for quick demos.
+export default defineConfig(({ mode }) => ({
   plugins: [react()],
-  build: { outDir: "dist/client", sourcemap: true },
+  define: mode === "preview" ? { "import.meta.env.VITE_PREVIEW": JSON.stringify("1") } : {},
+  build:
+    mode === "preview"
+      ? {
+          outDir: "dist/preview",
+          sourcemap: false,
+          cssCodeSplit: false,
+          assetsInlineLimit: 100_000_000,
+          rolldownOptions: { output: { codeSplitting: false } },
+        }
+      : { outDir: "dist/client", sourcemap: true },
   server: {
     port: 5173,
     proxy: {
@@ -16,4 +27,4 @@ export default defineConfig({
     fileParallelism: false,
     testTimeout: 20000,
   },
-} as any);
+})) as any;
