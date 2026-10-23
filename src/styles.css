@@ -1438,6 +1438,11 @@ textarea {
   }
   .config-bar {
     font-size: 0.8rem;
+    max-width: 100%;
+  }
+  .config-bar .seg {
+    flex-wrap: wrap;
+    justify-content: center;
   }
   .config-bar .divider {
     display: none;
