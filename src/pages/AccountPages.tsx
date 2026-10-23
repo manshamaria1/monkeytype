@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import PreviewOnly from "../components/PreviewOnly";
 import { PREVIEW } from "../lib/preview";
+import { WP } from "../lib/wp";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../lib/api";
 import { useAuth, type User } from "../state/auth";
@@ -246,25 +247,64 @@ function VerifyPageInner() {
 
 export function LoginPage() {
   if (PREVIEW) return <PreviewOnly feature="Accounts" />;
+  if (WP) return <WpAccount />;
   return <LoginPageInner />;
 }
 
 export function RegisterPage() {
   if (PREVIEW) return <PreviewOnly feature="Accounts" />;
+  if (WP) return <WpAccount />;
   return <RegisterPageInner />;
 }
 
 export function ForgotPage() {
   if (PREVIEW) return <PreviewOnly feature="Accounts" />;
+  if (WP) return <WpAccount />;
   return <ForgotPageInner />;
 }
 
 export function ResetPage() {
   if (PREVIEW) return <PreviewOnly feature="Accounts" />;
+  if (WP) return <WpAccount />;
   return <ResetPageInner />;
 }
 
 export function VerifyPage() {
   if (PREVIEW) return <PreviewOnly feature="Accounts" />;
+  if (WP) return <WpAccount />;
   return <VerifyPageInner />;
+}
+
+/** WordPress sites use their own sign-in, registration and password pages. */
+function WpAccount() {
+  const { user } = useAuth();
+  if (!WP) return null;
+  return (
+    <AuthCard title={user ? `Signed in as ${user.username}` : "Sign in"}>
+      {user ? (
+        <p>
+          <Link to="/profile">Go to your profile</Link>
+        </p>
+      ) : (
+        <>
+          <p className="muted small">Use your {WP.siteName} account to save results, sync settings and join the leaderboard.</p>
+          <div className="form">
+            <a className="btn btn-block" href={WP.loginUrl}>
+              sign in
+            </a>
+            {WP.registerUrl ? (
+              <a className="btn btn-block btn-ghost" href={WP.registerUrl}>
+                create account
+              </a>
+            ) : (
+              <p className="muted small">New accounts are not open on this site.</p>
+            )}
+            <a className="small" href={WP.lostPasswordUrl}>
+              Forgot your password?
+            </a>
+          </div>
+        </>
+      )}
+    </AuthCard>
+  );
 }

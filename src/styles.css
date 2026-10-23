@@ -230,6 +230,10 @@ kbd {
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
 }
+.two-col > * {
+  min-width: 0;
+  overflow-x: auto;
+}
 .row-end {
   display: flex;
   justify-content: flex-end;

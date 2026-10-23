@@ -1,9 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { api } from "../lib/api";
+import { WP } from "../lib/wp";
 
 export interface User {
   id: number;
   username: string;
+  /** WordPress: URL-safe name used in profile links. */
+  slug?: string;
   email: string;
   emailVerified: boolean;
 }
@@ -21,8 +24,8 @@ interface AuthState {
 const Ctx = createContext<AuthState>(null as unknown as AuthState);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(WP?.user ?? null);
+  const [loading, setLoading] = useState(!WP);
   const [offline, setOffline] = useState(false);
 
   const refresh = useCallback(async () => {
@@ -42,6 +45,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refresh]);
 
   const logout = useCallback(async () => {
+    if (WP) {
+      window.location.href = WP.logoutUrl;
+      return;
+    }
     await api("/api/auth/logout", { method: "POST" });
     setUser(null);
   }, []);

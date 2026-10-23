@@ -4,6 +4,7 @@ import { ACHIEVEMENTS } from "../../shared/achievements";
 import { getLanguage } from "../../shared/languages";
 import { fmt, fmtDuration, modeLabel } from "../lib/format";
 import { TOOL } from "../lib/preview";
+import { WP } from "../lib/wp";
 import type { SaveState } from "../typing/useResultSaver";
 import LineChart from "./LineChart";
 
@@ -143,7 +144,7 @@ function SaveStatus({ save, onRetry, signedIn }: { save: SaveState; onRetry?: ()
       {save.status === "local" && TOOL && <span className="muted">Result saved in this browser.</span>}
       {save.status === "local" && !TOOL && (
         <span>
-          Saved on this device only. <Link to="/account/login">Sign in</Link> to keep your history and appear on leaderboards.
+          Saved on this device only. {WP ? <a href={WP.loginUrl}>Sign in</a> : <Link to="/account/login">Sign in</Link>} to keep your history and appear on leaderboards.
         </span>
       )}
       {save.status === "skipped" && <span className="muted">{save.error}</span>}

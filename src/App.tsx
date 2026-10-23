@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Link, MemoryRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, HashRouter, Link, MemoryRouter, Route, Routes } from "react-router-dom";
+import { WP_BUILD } from "./lib/wp";
 import Layout from "./components/Layout";
 import { AuthProvider } from "./state/auth";
 import { ConfigProvider } from "./state/config";
@@ -42,7 +43,8 @@ function NotFound() {
 }
 
 // The preview build runs inside a frame whose URL it cannot control, so routes live in memory.
-const Router = PREVIEW ? MemoryRouter : BrowserRouter;
+// WordPress: the app is one page of the site, so its own pages live after "#" (shareable invite links).
+const Router = PREVIEW ? MemoryRouter : WP_BUILD ? HashRouter : BrowserRouter;
 
 export default function App() {
   return (

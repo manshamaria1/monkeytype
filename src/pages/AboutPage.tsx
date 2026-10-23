@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
 import { LANGUAGES } from "../../shared/languages";
 import { useUi } from "../state/ui";
+import { WP } from "../lib/wp";
 
 export default function AboutPage() {
   const ui = useUi();
   return (
     <div className="page prose">
-      <h1>About Monkeytype</h1>
+      <h1>{WP ? "About this typing test" : "About Monkeytype"}</h1>
       <p>
-        Monkeytype is a minimal typing test. Pick a mode, start typing, and see your speed and accuracy. Create an account to keep your history, sync
+        {WP ? "This" : "Monkeytype"} is a minimal typing test. Pick a mode, start typing, and see your speed and accuracy. Create an account to keep your history, sync
         settings, appear on leaderboards, race other people and track your progress through lessons and achievements.
       </p>
 
@@ -122,26 +123,55 @@ export default function AboutPage() {
         <Link to="/leaderboard">leaderboard page</Link>.
       </p>
 
-      <h2 id="privacy">Privacy</h2>
-      <ul>
-        <li>Without an account, settings and results stay in your browser's local storage.</li>
-        <li>
-          With an account we store your email, username, a scrypt hash of your password (never the password itself), your profile, settings, test results
-          (including keystroke timings for ranked results, kept to audit leaderboard entries) and race history.
-        </li>
-        <li>Your email and full history are never shown to other users. Your profile, records and achievements are public.</li>
-        <li>
-          You can download all your data or delete your account permanently from your <Link to="/profile">profile</Link>. Deleting the account removes
-          all of its data.
-        </li>
-        <li>Fonts are loaded from Google Fonts. No analytics or advertising trackers are used.</li>
-      </ul>
+      {WP ? (
+        <>
+          <h2 id="privacy">Privacy</h2>
+          <ul>
+            <li>Without an account, settings and results stay in your browser's local storage.</li>
+            <li>
+              With a {WP.siteName} account, your typing results, records, progress, race history and typing settings are saved to that account. Your
+              email and full history are never shown to other users; your profile, records and achievements are public.
+            </li>
+            <li>
+              You can download or delete your typing data from your <Link to="/profile">profile</Link>.
+              {WP.privacyUrl && (
+                <>
+                  {" "}
+                  See the site's <a href={WP.privacyUrl}>privacy policy</a>.
+                </>
+              )}
+            </li>
+          </ul>
+        </>
+      ) : (
+        <>
+          <h2 id="privacy">Privacy</h2>
+          <ul>
+            <li>Without an account, settings and results stay in your browser's local storage.</li>
+            <li>
+              With an account we store your email, username, a scrypt hash of your password (never the password itself), your profile, settings, test results
+              (including keystroke timings for ranked results, kept to audit leaderboard entries) and race history.
+            </li>
+            <li>Your email and full history are never shown to other users. Your profile, records and achievements are public.</li>
+            <li>
+              You can download all your data or delete your account permanently from your <Link to="/profile">profile</Link>. Deleting the account removes
+              all of its data.
+            </li>
+            <li>Fonts are loaded from Google Fonts. No analytics or advertising trackers are used.</li>
+          </ul>
 
+        </>
+      )}
+
+      {!WP && (
+        <>
       <h2>Credits</h2>
       <p className="muted">
         Inspired by the minimalist typing-test style popularised by the open-source Monkeytype project. This implementation, its themes and assets are
         original. Before any public launch, check your rights to the name and branding.
       </p>
+        </>
+      )}
     </div>
   );
 }

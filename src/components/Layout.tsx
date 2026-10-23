@@ -5,6 +5,7 @@ import { clearLocalHistory, getLocalHistory } from "../lib/localHistory";
 import { DURATION_SHORTCUTS, NAV_SHORTCUTS } from "../lib/shortcuts";
 import { useAuth } from "../state/auth";
 import { PREVIEW } from "../lib/preview";
+import { WP_BUILD } from "../lib/wp";
 import { useConfig } from "../state/config";
 import { useToast } from "../state/toast";
 import { useUi } from "../state/ui";
@@ -84,16 +85,20 @@ export default function Layout() {
 
   return (
     <div className={`app${focusHide ? " focus-active" : ""}`}>
-      <a href="#main" className="skip-link">
-        Skip to content
-      </a>
+      {!WP_BUILD && (
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
+      )}
       <header className="header">
+        {!WP_BUILD && (
         <Link to="/" className="logo" aria-label="Monkeytype home">
           <span className="logo-mark" aria-hidden="true">
             🐒
           </span>
           <span className="logo-text">monkeytype</span>
         </Link>
+        )}
         <button className="icon-btn menu-toggle" aria-expanded={menuOpen} aria-controls="main-nav" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
           ☰
         </button>

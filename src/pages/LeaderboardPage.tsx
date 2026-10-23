@@ -10,6 +10,7 @@ import { fmt, fmtDateTime } from "../lib/format";
 import { useAuth } from "../state/auth";
 
 interface Entry {
+  slug?: string;
   rank: number;
   result_id: number;
   wpm: number;
@@ -195,10 +196,10 @@ function LeaderboardPageInner() {
             </thead>
             <tbody>
               {data.entries.map((e) => (
-                <tr key={e.result_id} className={user?.username === e.username ? "me" : ""}>
+                <tr key={e.result_id} className={(user?.slug ?? user?.username) === (e.slug ?? e.username) ? "me" : ""}>
                   <td>{e.rank === 1 ? "🥇" : e.rank === 2 ? "🥈" : e.rank === 3 ? "🥉" : e.rank}</td>
                   <td>
-                    <Link to={`/u/${e.username}`} className="player">
+                    <Link to={`/u/${e.slug ?? e.username}`} className="player">
                       <span className="avatar-sm" aria-hidden="true">
                         {avatarEmoji(e.avatar)}
                       </span>

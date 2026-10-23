@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useLayoutEffect, use
 import { DEFAULT_CONFIG, FONTS, fontCss, sanitizeConfig, type Config } from "../../shared/config";
 import { getTheme } from "../../shared/themes";
 import { api } from "../lib/api";
+import { WP_BUILD } from "../lib/wp";
 import { readJson, writeJson } from "../lib/storage";
 import { useAuth } from "./auth";
 
@@ -27,7 +28,8 @@ const Ctx = createContext<ConfigState>(null as unknown as ConfigState);
 /** Apply theme colours and typography as CSS custom properties on <html>. */
 export function applyAppearance(config: Config, themeOverride?: string | null) {
   const theme = getTheme(themeOverride ?? config.theme, config.customTheme);
-  const root = document.documentElement;
+  // In WordPress the app lives inside the theme's page: style only its own container.
+  const root = (WP_BUILD && document.getElementById("typing-test-root")) || document.documentElement;
   const vars: Record<string, string> = {
     "--bg": theme.bg,
     "--main": theme.main,
@@ -38,7 +40,7 @@ export function applyAppearance(config: Config, themeOverride?: string | null) {
     "--error": theme.error,
     "--error-extra": theme.errorExtra,
     "--font": fontCss(config.fontFamily),
-    "--font-size": `${config.fontSize}rem`,
+    "--font-size": WP_BUILD ? `${config.fontSize * 16}px` : `${config.fontSize}rem`,
   };
   for (const [k, v] of Object.entries(vars)) root.style.setProperty(k, v);
   root.style.colorScheme = theme.dark ? "dark" : "light";

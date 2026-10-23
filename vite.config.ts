@@ -7,9 +7,21 @@ export default defineConfig(({ mode }) => ({
   define:
     mode === "preview" || mode === "tool"
       ? { "import.meta.env.VITE_PREVIEW": JSON.stringify("1"), "import.meta.env.VITE_TOOL": JSON.stringify(mode === "tool" ? "1" : "0") }
-      : {},
+      : mode === "wordpress"
+        ? { "import.meta.env.VITE_WP": JSON.stringify("1") }
+        : {},
   build:
-    mode === "preview" || mode === "tool"
+    mode === "wordpress"
+      ? {
+          // One classic script + one stylesheet, enqueued by the WordPress plugin.
+          outDir: "dist/wordpress",
+          sourcemap: false,
+          cssCodeSplit: false,
+          modulePreload: false,
+          assetsInlineLimit: 100_000_000,
+          rolldownOptions: { output: { codeSplitting: false, format: "iife" } },
+        }
+      : mode === "preview" || mode === "tool"
       ? {
           outDir: `dist/${mode}`,
           sourcemap: false,

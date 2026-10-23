@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import PreviewOnly from "../components/PreviewOnly";
 import { PREVIEW } from "../lib/preview";
+import { WP } from "../lib/wp";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { AVATARS, avatarEmoji } from "../../shared/avatars";
 import { getLanguage } from "../../shared/languages";
-import { api } from "../lib/api";
+import { api, apiUrl } from "../lib/api";
 import { fmt, fmtDate, fmtDateTime, fmtDuration, modeLabel } from "../lib/format";
 import { useAuth } from "../state/auth";
 import { useToast } from "../state/toast";
@@ -184,7 +185,7 @@ function ProfilePageInner() {
     try {
       await api("/api/me/profile", {
         method: "PATCH",
-        body: { username: form.username, bio: form.bio, avatar: form.avatar, country: form.country || null, keyboard: form.keyboard },
+        body: { ...(WP ? {} : { username: form.username }), bio: form.bio, avatar: form.avatar, country: form.country || null, keyboard: form.keyboard },
       });
       setProfile(form);
       await refresh();
@@ -203,7 +204,7 @@ function ProfilePageInner() {
       <div className="page-head">
         <h1>Your profile</h1>
         <span className="row-gap">
-          <Link className="btn btn-small btn-ghost" to={`/u/${user.username}`}>
+          <Link className="btn btn-small btn-ghost" to={`/u/${user.slug ?? user.username}`}>
             view public profile
           </Link>
           <button
@@ -242,10 +243,19 @@ function ProfilePageInner() {
             ))}
           </fieldset>
           <div className="two-col">
-            <label className="field">
-              <span>Username</span>
-              <input value={form.username} maxLength={20} onChange={(e) => setForm({ ...form, username: e.target.value })} />
-            </label>
+            {WP ? (
+              <p className="field">
+                <span>Name</span>
+                <span>
+                  {form.username} · <a href={WP.profileUrl}>change your name, email or password</a>
+                </span>
+              </p>
+            ) : (
+              <label className="field">
+                <span>Username</span>
+                <input value={form.username} maxLength={20} onChange={(e) => setForm({ ...form, username: e.target.value })} />
+              </label>
+            )}
             <label className="field">
               <span>Country (two-letter code, optional, used for country leaderboards)</span>
               <input value={form.country ?? ""} maxLength={2} onChange={(e) => setForm({ ...form, country: e.target.value.toUpperCase().replace(/[^A-Z]/g, "") || null })} />
@@ -332,7 +342,7 @@ function ProfilePageInner() {
         </table>
       )}
 
-      <AccountSecurity />
+      {WP ? <WpAccountData /> : <AccountSecurity />}
     </div>
   );
 }
@@ -385,7 +395,7 @@ function AccountSecurity() {
       <h2>Your data</h2>
       <div className="card">
         <p>
-          <a href="/api/me/export" download>
+          <a href={apiUrl("/api/me/export")} download>
             Download all your data
           </a>{" "}
           (profile, settings, every result, records, achievements, races) as JSON.
@@ -439,4 +449,61 @@ export default function ProfilePage() {
 export function PublicProfilePage() {
   if (PREVIEW) return <PreviewOnly feature="Profile" />;
   return <PublicProfilePageInner />;
+}
+
+/** WordPress: passwords and account deletion are handled by the site; typing data can be removed here. */
+function WpAccountData() {
+  const toast = useToast();
+  const [confirm, setConfirm] = useState(false);
+  if (!WP) return null;
+  return (
+    <>
+      <h2>Your data</h2>
+      <div className="card">
+        <p>
+          <a href={apiUrl("/api/me/export")} download>
+            Download all your typing data
+          </a>{" "}
+          (settings, every result, records, achievements, races) as JSON.
+        </p>
+        <p className="muted small">
+          Your password, email and the account itself are managed by {WP.siteName}: <a href={WP.profileUrl}>account settings</a>
+          {WP.privacyUrl && (
+            <>
+              {" "}
+              · <a href={WP.privacyUrl}>privacy policy</a>
+            </>
+          )}
+          .
+        </p>
+        {!confirm ? (
+          <button className="btn btn-danger" onClick={() => setConfirm(true)}>
+            delete my typing data
+          </button>
+        ) : (
+          <div className="row-gap">
+            <span>This permanently deletes your results, records, leaderboard entries, progress and typing settings.</span>
+            <button
+              className="btn btn-danger"
+              onClick={async () => {
+                try {
+                  await api("/api/me/data", { method: "DELETE" });
+                  toast("success", "Your typing data was deleted.");
+                  setConfirm(false);
+                  setTimeout(() => window.location.reload(), 800);
+                } catch (e) {
+                  toast("error", (e as Error).message);
+                }
+              }}
+            >
+              yes, delete
+            </button>
+            <button className="btn btn-ghost" onClick={() => setConfirm(false)}>
+              cancel
+            </button>
+          </div>
+        )}
+      </div>
+    </>
+  );
 }

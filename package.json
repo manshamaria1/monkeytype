@@ -20,7 +20,9 @@
     "test:integration": "vitest run tests/integration",
     "test:e2e": "playwright test",
     "build:preview": "tsc --noEmit -p tsconfig.json && vite build --mode preview && node scripts/make-preview-page.mjs",
-    "build:tool": "tsc --noEmit -p tsconfig.json && vite build --mode tool && FULL_HTML=1 PAGE_TITLE='Typing Test' node scripts/make-preview-page.mjs docs/typing-test/index.html dist/tool"
+    "build:tool": "tsc --noEmit -p tsconfig.json && vite build --mode tool && FULL_HTML=1 PAGE_TITLE='Typing Test' node scripts/make-preview-page.mjs docs/typing-test/index.html dist/tool",
+    "build:wp": "tsc --noEmit -p tsconfig.json && node scripts/build-wp.mjs",
+    "test:wp-parity": "tsx tests/wp/make-parity-cases.ts dist/parity.json && php tests/wp/parity.php dist/parity.json"
   },
   "dependencies": {
     "express": "^5.3.0",

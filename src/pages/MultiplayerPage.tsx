@@ -12,6 +12,11 @@ import { useConfig } from "../state/config";
 import { useToast } from "../state/toast";
 import { TypingSession } from "../typing/session";
 import { useRoom, type RoomPlayer, type RoomState } from "../typing/useRoom";
+import { usePollingRoom } from "../typing/usePollingRoom";
+import { WP_BUILD } from "../lib/wp";
+
+// WordPress hosting has no WebSockets: rooms are polled over HTTP instead.
+const useRoomTransport = WP_BUILD ? usePollingRoom : useRoom;
 import { useKeySounds, useSessionActivity, useSessionClock } from "../typing/useTypingTest";
 
 function MultiplayerPageInner() {
@@ -20,7 +25,7 @@ function MultiplayerPageInner() {
   const { user } = useAuth();
   const toast = useToast();
   const resumeRef = useRef<(e: TypingEvent[]) => void>(() => {});
-  const mp = useRoom((events) => resumeRef.current(events));
+  const mp = useRoomTransport((events) => resumeRef.current(events));
   const [name, setName] = useState(() => readJson<string>("mt.guestName", ""));
   const [joinCode, setJoinCode] = useState("");
   const [language, setLanguage] = useState("english");
@@ -205,7 +210,7 @@ function Room({ mp, room, resumeRef }: { mp: Mp; room: RoomState; resumeRef: Rea
 
   const countdown = room.startAt ? Math.ceil((room.startAt - mp.serverNow()) / 1000) : 0;
   void now;
-  const inviteUrl = `${location.origin}/multiplayer/${room.code}`;
+  const inviteUrl = WP_BUILD ? `${location.origin}${location.pathname}${location.search}#/multiplayer/${room.code}` : `${location.origin}/multiplayer/${room.code}`;
   const connectedCount = room.players.filter((p) => p.connected).length;
   const sorted = room.state === "finished" ? [...room.players].sort((a, b) => (a.place ?? 99) - (b.place ?? 99)) : room.players;
 

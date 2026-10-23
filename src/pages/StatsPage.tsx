@@ -4,7 +4,7 @@ import type { Sample, KeyStat } from "../../shared/engine";
 import { getLanguage, LANGUAGES } from "../../shared/languages";
 import LineChart from "../components/LineChart";
 import Results from "../components/Results";
-import { api, qs } from "../lib/api";
+import { api, apiUrl, qs } from "../lib/api";
 import { fmt, fmtDate, fmtDateTime, fmtDuration, modeLabel } from "../lib/format";
 import { getLocalHistory } from "../lib/localHistory";
 import { useAuth } from "../state/auth";
@@ -115,7 +115,7 @@ function AccountStats() {
     <div className="page">
       <div className="page-head">
         <h1>Statistics</h1>
-        <a className="btn btn-small btn-ghost" href="/api/me/export" download>
+        <a className="btn btn-small btn-ghost" href={apiUrl("/api/me/export")} download>
           export my data (JSON)
         </a>
       </div>

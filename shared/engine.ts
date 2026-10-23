@@ -405,7 +405,7 @@ export class TypingEngine {
     if (this.finished && !this.failed) return 1;
     const total = this.words.length;
     if (total === 0) return 0;
-    const target = this.words[this.index];
+    const target = this.words[this.index] ?? [];
     const partial = target.length ? Math.min(this.typed[this.index].length / target.length, 1) : 0;
     return Math.min((this.index + partial) / total, 1);
   }

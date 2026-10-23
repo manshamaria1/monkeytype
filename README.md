@@ -118,7 +118,12 @@ Full definitions are on the in-app About page and in `shared/engine.ts`.
 
 Ranked: time 15/30/60/120 s and words 10/25/50/100, punctuation and numbers off, default word list (200 words), not pasted, not failed, accuracy ≥ 75 %, ≤ 350 WPM, keystroke timing not machine-regular. One entry per player (their best in the period). Order: WPM ↓, accuracy ↓, earlier result first. Periods are UTC calendar day / ISO week (Monday) / month / all time. Country boards use the profile country. The server replay prevents edited results but **cannot prove a human typed the log**; ranked keystroke logs are stored in `test_replays` for auditing.
 
+## WordPress plugin
+
+`npm run build:wp` builds `dist/typing-test.zip`, a WordPress plugin with the whole app (accounts are WordPress users, multiplayer uses HTTP polling, results are checked by a PHP port of the engine). See `docs/WORDPRESS.md`.
+
 ## Documentation
 
 - `docs/SCHEMA.md` – database tables and indexes
+- `docs/WORDPRESS.md` – the WordPress plugin: install, architecture, build and tests
 - `docs/PROGRESS.md` – feature checklist, test status, known limitations and next steps
