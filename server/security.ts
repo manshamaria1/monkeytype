@@ -4,7 +4,8 @@ import { HttpError } from "./http";
 
 export function securityHeaders(_req: Request, res: Response, next: NextFunction) {
   res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
+  // Embedding is denied unless FRAME_ANCESTORS lists the sites allowed to embed the app.
+  if (env.frameAncestors.length === 0) res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
@@ -17,7 +18,7 @@ export function securityHeaders(_req: Request, res: Response, next: NextFunction
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data:",
       "connect-src 'self' ws: wss:",
-      "frame-ancestors 'none'",
+      env.frameAncestors.length ? `frame-ancestors 'self' ${env.frameAncestors.join(" ")}` : "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
     ].join("; "),

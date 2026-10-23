@@ -74,6 +74,7 @@ Playwright uses its own Chromium, or `CHROMIUM_PATH` / `/opt/pw-browsers/chromiu
 | `APP_URL` | `http://localhost:5173` | Public URL used in email links and the CSRF origin check |
 | `NODE_ENV` | – | `production` enables `Secure` cookies and HSTS |
 | `SMTP_URL` | – | e.g. `smtp://user:pass@smtp.example.com:587`. Unset = emails go to the log |
+| `FRAME_ANCESTORS` | – | Space-separated origins allowed to embed the app in an iframe (e.g. a WordPress site). Unset = embedding blocked |
 | `MAIL_FROM` | `Monkeytype <no-reply@example.com>` | Sender address |
 
 Secrets live only in the server environment; nothing secret is bundled into the client.
@@ -97,6 +98,8 @@ Secrets live only in the server environment; nothing secret is bundled into the 
    }
    ```
 5. Health check: `GET /api/health` (checks the database).
+
+**Embedding in another site (e.g. WordPress):** set `FRAME_ANCESTORS` to that site's origin(s). Prefer serving the app on a subdomain of the same site (e.g. `type.example.com` for `example.com`): browsers then treat it as same-site, so sign-in works inside the iframe. From a completely different domain, many browsers block the login cookie inside iframes, so typing tests work but signing in may not; link to the app instead.
 
 **Scaling limits (single instance by design today):** multiplayer rooms and rate-limit counters live in process memory. Run one instance, or before scaling out add sticky sessions for `/ws` plus a shared store (e.g. Redis) for rooms and rate limits.
 
