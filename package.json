@@ -19,7 +19,8 @@
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:e2e": "playwright test",
-    "build:preview": "tsc --noEmit -p tsconfig.json && vite build --mode preview && node scripts/make-preview-page.mjs"
+    "build:preview": "tsc --noEmit -p tsconfig.json && vite build --mode preview && node scripts/make-preview-page.mjs",
+    "build:tool": "tsc --noEmit -p tsconfig.json && vite build --mode tool && FULL_HTML=1 PAGE_TITLE='Typing Test' node scripts/make-preview-page.mjs docs/typing-test/index.html dist/tool"
   },
   "dependencies": {
     "express": "^5.3.0",

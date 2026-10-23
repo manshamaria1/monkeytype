@@ -3,6 +3,7 @@ import type { Sample, KeyStat, TestStats } from "../../shared/engine";
 import { ACHIEVEMENTS } from "../../shared/achievements";
 import { getLanguage } from "../../shared/languages";
 import { fmt, fmtDuration, modeLabel } from "../lib/format";
+import { TOOL } from "../lib/preview";
 import type { SaveState } from "../typing/useResultSaver";
 import LineChart from "./LineChart";
 
@@ -139,7 +140,8 @@ function SaveStatus({ save, onRetry, signedIn }: { save: SaveState; onRetry?: ()
     <div className="save-status" data-testid="save-status">
       {save.status === "saving" && <span>Saving result…</span>}
       {save.status === "saved" && <span className="ok">✓ Result saved to your account.</span>}
-      {save.status === "local" && (
+      {save.status === "local" && TOOL && <span className="muted">Result saved in this browser.</span>}
+      {save.status === "local" && !TOOL && (
         <span>
           Saved on this device only. <Link to="/account/login">Sign in</Link> to keep your history and appear on leaderboards.
         </span>

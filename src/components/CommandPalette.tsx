@@ -4,6 +4,7 @@ import { TIME_PRESETS, WORD_PRESETS } from "../../shared/config";
 import { LANGUAGES } from "../../shared/languages";
 import { THEMES } from "../../shared/themes";
 import { NAV_SHORTCUTS } from "../lib/shortcuts";
+import { TOOL } from "../lib/preview";
 import { useConfig } from "../state/config";
 import { useUi } from "../state/ui";
 import Modal from "./Modal";
@@ -31,7 +32,7 @@ export default function CommandPalette() {
       navigate("/");
     };
     return [
-      ...NAV_SHORTCUTS.map((s) => ({ id: "nav-" + s.path, label: `Go to ${s.label}`, group: "navigate", run: () => navigate(s.path) })),
+      ...(TOOL ? [] : NAV_SHORTCUTS).map((s) => ({ id: "nav-" + s.path, label: `Go to ${s.label}`, group: "navigate", run: () => navigate(s.path) })),
       ...TIME_PRESETS.map((t) => ({ id: "time-" + t, label: `Time test ${t}s`, group: "test", run: go({ mode: "time", time: t }) })),
       ...WORD_PRESETS.map((w) => ({ id: "words-" + w, label: `Words test ${w}`, group: "test", run: go({ mode: "words", words: w }) })),
       { id: "quote", label: "Quote test", group: "test", run: go({ mode: "quote" }) },
@@ -41,7 +42,10 @@ export default function CommandPalette() {
       { id: "nums", label: `${config.numbers ? "Disable" : "Enable"} numbers`, group: "test", run: go({ numbers: !config.numbers }) },
       { id: "focus", label: `${config.focusMode ? "Disable" : "Enable"} focus mode`, group: "settings", run: () => update({ focusMode: !config.focusMode }) },
       { id: "sound", label: `Sound: ${config.sound === "off" ? "turn on (click)" : "turn off"}`, group: "settings", run: () => update({ sound: config.sound === "off" ? "click" : "off" }) },
-      { id: "shortcuts", label: "Show keyboard shortcuts", group: "help", run: () => ui.setShortcutsOpen(true) },
+      ...(TOOL ? [] : [{ id: "shortcuts", label: "Show keyboard shortcuts", group: "help", run: () => ui.setShortcutsOpen(true) }]),
+      ...(["click", "beep", "pop"] as const).map((snd) => ({ id: "snd-" + snd, label: `Sound: ${snd}`, group: "settings", run: () => update({ sound: snd }) })),
+      ...(["line", "block", "underline"] as const).map((c) => ({ id: "caret-" + c, label: `Caret: ${c}`, group: "settings", run: () => update({ caretStyle: c }) })),
+      ...[1.5, 1.75, 2, 2.5, 3].map((f) => ({ id: "font-" + f, label: `Font size: ${f}`, group: "settings", run: () => update({ fontSize: f }) })),
       ...(["normal", "expert", "master"] as const).map((d) => ({ id: "diff-" + d, label: `Difficulty: ${d}`, group: "test", run: go({ difficulty: d }) })),
       ...THEMES.map((t) => ({
         id: "theme-" + t.id,

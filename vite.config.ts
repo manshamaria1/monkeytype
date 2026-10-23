@@ -1,14 +1,17 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// `vite build --mode preview` makes a single self-contained page (no server) for quick demos.
+// `--mode preview` (whole app, no server) and `--mode tool` (typing test only) build one self-contained page.
 export default defineConfig(({ mode }) => ({
   plugins: [react()],
-  define: mode === "preview" ? { "import.meta.env.VITE_PREVIEW": JSON.stringify("1") } : {},
+  define:
+    mode === "preview" || mode === "tool"
+      ? { "import.meta.env.VITE_PREVIEW": JSON.stringify("1"), "import.meta.env.VITE_TOOL": JSON.stringify(mode === "tool" ? "1" : "0") }
+      : {},
   build:
-    mode === "preview"
+    mode === "preview" || mode === "tool"
       ? {
-          outDir: "dist/preview",
+          outDir: `dist/${mode}`,
           sourcemap: false,
           cssCodeSplit: false,
           assetsInlineLimit: 100_000_000,
